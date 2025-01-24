@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>俄罗斯方块</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="start-screen" class="start-screen">
+        <h1 class="game-title">俄罗斯方块</h1>
+        <div class="current-user">
+            当前用户：<span id="current-user">未登录</span>
+        </div>
+        <div class="button-group">
+            <button id="start-game" class="start-btn">开始游戏</button>
+            <button id="new-user" class="new-user-btn">新用户</button>
+            <button id="show-instructions" class="instruction-btn">操作说明</button>
+        </div>
+
+        <div class="leaderboard">
+            <h2>历史最高分</h2>
+            <div id="high-scores" class="high-scores">
+                <!-- 分数记录将在这里动态插入 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加操作说明弹窗 -->
+    <div id="instructions-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>操作说明</h2>
+            <table class="controls-table">
+                <thead>
+                    <tr>
+                        <th>操作</th>
+                        <th>键盘</th>
+                        <th>手柄</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>左右移动</td>
+                        <td>← →</td>
+                        <td>方向键/摇杆</td>
+                    </tr>
+                    <tr>
+                        <td>加速下落</td>
+                        <td>↓</td>
+                        <td>方向键下/摇杆下</td>
+                    </tr>
+                    <tr>
+                        <td>瞬间落下</td>
+                        <td>空格键</td>
+                        <td>Y</td>
+                    </tr>
+                    <tr>
+                        <td>逆时针旋转</td>
+                        <td>X键</td>
+                        <td>B</td>
+                    </tr>
+                    <tr>
+                        <td>顺时针旋转</td>
+                        <td>C键</td>
+                        <td>A</td>
+                    </tr>
+                    <tr>
+                        <td>储存方块</td>
+                        <td>Z键</td>
+                        <td>X</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 修改用户名输入弹窗 -->
+    <div id="user-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>选择用户</h2>
+            <div class="name-input-container">
+                <input type="text" id="new-user-name" placeholder="输入新用户名" maxlength="10">
+                <button id="save-user" class="save-user-btn">创建</button>
+            </div>
+            <div class="history-users">
+                <h3>历史用户</h3>
+                <div id="user-list" class="user-list">
+                    <!-- 历史用户将在这里动态显示 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-screen" class="game-screen hidden">
+        <div class="game-container">
+            <div class="score-container">
+                <span>分数：<span id="score">0</span></span>
+                <span class="time-separator">|</span>
+                <span>时间：<span id="time">00:00</span></span>
+            </div>
+            <div class="mission-container">
+                <span>当前回合：<span id="level">1</span></span>
+                <span class="mission">回合目标：<span id="mission-text">消除10行</span></span>
+                <span class="progress">回合进度：<span id="mission-progress">0</span>/<span id="mission-target">10</span></span>
+            </div>
+            <div class="play-area">
+                <div class="hold-piece-container">
+                    <div class="hold-label">储存：</div>
+                    <canvas id="hold-piece" width="160" height="160"></canvas>
+                </div>
+                <canvas id="tetris" width="480" height="800"></canvas>
+                <div class="next-piece-container">
+                    <div class="next-label">下一个：</div>
+                    <canvas id="next-piece" width="160" height="160"></canvas>
+                </div>
+            </div>
+            <button id="restart" class="restart-btn">重新开始</button>
+            <div id="game-over" class="game-over">
+                游戏结束
+                <div class="final-score">最终得分：<span id="final-score">0</span></div>
+                <div class="game-over-buttons">
+                    <button id="restart-game" class="restart-btn">重新开始</button>
+                    <button id="back-to-menu" class="menu-btn">返回菜单</button>
+                    <button id="view-scores" class="scores-btn">查看排行</button>
+                </div>
+                <div class="new-high-score hidden">新纪录！</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加暂停菜单 -->
+    <div id="pause-menu" class="modal hidden">
+        <div class="modal-content pause-content">
+            <h2>游戏暂停</h2>
+            <div class="pause-buttons">
+                <button id="resume-game" class="resume-btn">继续游戏</button>
+                <button id="restart-from-pause" class="restart-btn">重新开始</button>
+                <button id="quit-to-menu" class="menu-btn">返回主菜单</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

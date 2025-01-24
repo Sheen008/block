@@ -1,0 +1,716 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.score-container {
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.play-area {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.next-piece-container,
+.hold-piece-container {
+    background-color: #fff;
+    padding: 15px;
+    border: 2px solid #000;
+    border-radius: 5px;
+}
+
+.next-label,
+.hold-label {
+    font-size: 20px;
+    margin-bottom: 10px;
+    font-family: Arial, sans-serif;
+}
+
+#next-piece,
+#hold-piece {
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+canvas#tetris {
+    border: 2px solid #000;
+    background-color: #fff;
+}
+
+.restart-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.restart-btn:hover {
+    background-color: #45a049;
+}
+
+.game-over {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    font-weight: bold;
+    color: red;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.start-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.game-title {
+    font-size: 48px;
+    color: #333;
+    margin-bottom: 40px;
+    font-family: Arial, sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.start-btn {
+    padding: 15px 40px;
+    font-size: 24px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.start-btn:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.start-btn:active {
+    transform: scale(0.95);
+}
+
+.start-btn.selected {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    border: 2px solid #fff;
+    position: relative;
+    z-index: 1;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
+    50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.9); }
+    100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
+}
+
+.game-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.leaderboard {
+    margin-top: 30px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.high-scores {
+    max-width: 400px;
+}
+
+.score-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.score-entry:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
+.score-entry > span {
+    flex: 1;
+    text-align: center;
+}
+
+.score-entry .rank {
+    flex: 0 0 30px;
+}
+
+.score-entry .name {
+    flex: 0 0 80px;
+}
+
+.score-entry .score {
+    flex: 0 0 60px;
+}
+
+.score-entry .time {
+    flex: 0 0 60px;
+}
+
+.score-entry .date {
+    flex: 0 0 100px;
+}
+
+.score-entry .rank {
+    font-weight: bold;
+    color: #666;
+}
+
+.score-entry .score {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.score-entry .date {
+    color: #888;
+}
+
+.final-score {
+    font-size: 24px;
+    margin-top: 20px;
+    color: white;
+}
+
+.new-high-score {
+    color: #FFD700;
+    font-size: 28px;
+    margin-top: 15px;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.instructions {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+}
+
+.instructions h3 {
+    color: #333;
+    margin: 0 0 15px 0;
+    text-align: center;
+}
+
+.instructions ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.instructions li {
+    padding: 8px 0;
+    color: #666;
+    font-size: 18px;
+    text-align: center;
+}
+
+.time-separator {
+    color: #666;
+}
+
+.mission-container {
+    font-size: 20px;
+    font-family: Arial, sans-serif;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.mission {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.progress {
+    color: #666;
+}
+
+.difficulty-note {
+    color: #FFD700;
+    font-size: 0.9em;
+    margin-top: 10px;
+}
+
+.level-complete {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    animation: fadeIn 0.5s;
+    min-width: 300px;
+}
+
+.level-complete h2 {
+    margin: 0 0 15px 0;
+    color: #4CAF50;
+    font-size: 28px;
+}
+
+.level-complete p {
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.instruction-btn {
+    padding: 12px 30px;
+    font-size: 20px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.instruction-btn:hover {
+    background-color: #1976D2;
+    transform: scale(1.05);
+}
+
+.instruction-btn:active {
+    transform: scale(0.95);
+}
+
+.instruction-btn.selected {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    border: 2px solid #fff;
+    position: relative;
+    z-index: 1;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
+    50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.9); }
+    100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    position: relative;
+    max-width: 600px;
+    width: 90%;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.close-btn:hover {
+    color: #000;
+}
+
+.controls-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.controls-table th,
+.controls-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.controls-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    color: #333;
+}
+
+.controls-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.controls-table tr:hover {
+    background-color: #f0f0f0;
+}
+
+.current-user {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.new-user-btn {
+    padding: 12px 30px;
+    font-size: 20px;
+    background-color: #FF9800;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.new-user-btn:hover {
+    background-color: #F57C00;
+    transform: scale(1.05);
+}
+
+.new-user-btn:active {
+    transform: scale(0.95);
+}
+
+.new-user-btn.selected {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    border: 2px solid #fff;
+    position: relative;
+    z-index: 1;
+    animation: pulse 1s infinite;
+}
+
+.name-input-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+#new-user-name {
+    padding: 8px 12px;
+    font-size: 18px;
+    border: 2px solid #FF9800;
+    border-radius: 5px;
+    width: 200px;
+    text-align: center;
+}
+
+#new-user-name:focus {
+    outline: none;
+    border-color: #F57C00;
+    box-shadow: 0 0 5px rgba(255, 152, 0, 0.5);
+}
+
+.save-user-btn {
+    padding: 8px 20px;
+    font-size: 16px;
+    background-color: #FF9800;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.save-user-btn:hover {
+    background-color: #F57C00;
+}
+
+/* 添加用户名样式 */
+.name {
+    color: #2196F3;
+    font-weight: bold;
+    margin: 0 10px;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* 添加历史用户列表样式 */
+.history-users {
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.history-users h3 {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.user-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 5px 0;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.user-item:hover {
+    background-color: #e0e0e0;
+}
+
+.user-item.selected {
+    background-color: #2196F3;
+    color: white;
+}
+
+.user-item .delete-btn {
+    color: #999;
+    padding: 4px 8px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.user-item:hover .delete-btn {
+    color: #ff4444;
+}
+
+.user-item .delete-btn:hover {
+    color: #cc0000;
+}
+
+.game-over-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.game-over-buttons button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.game-over-buttons .restart-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.game-over-buttons .menu-btn {
+    background-color: #2196F3;
+    color: white;
+}
+
+.game-over-buttons .scores-btn {
+    background-color: #FF9800;
+    color: white;
+}
+
+.game-over-buttons button:hover {
+    transform: scale(1.05);
+}
+
+.game-over-buttons button:active {
+    transform: scale(0.95);
+}
+
+/* 添加游戏结束按钮选中状态样式 */
+.game-over-buttons .restart-btn.selected,
+.game-over-buttons .menu-btn.selected,
+.game-over-buttons .scores-btn.selected {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    border: 2px solid #fff;
+    position: relative;
+    z-index: 1;
+    animation: pulse 1s infinite;
+}
+
+/* 修改爆炸效果样式 */
+.explosion {
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, 
+        rgba(255,255,0,0.8) 0%, 
+        rgba(255,165,0,0.8) 30%, 
+        rgba(255,0,0,0.8) 70%, 
+        transparent 100%);
+    transform: translate(-50%, -50%);
+    animation: explode 0.5s ease-out forwards;
+    pointer-events: none;
+    z-index: 100;
+}
+
+@keyframes explode {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+/* 修改冰冻倒计时样式 */
+.freeze-countdown {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 64px;
+    color: #00BFFF;
+    text-shadow: 
+        0 0 10px rgba(0,191,255,0.8),
+        0 0 20px rgba(0,191,255,0.5),
+        0 0 30px rgba(0,191,255,0.3);
+    animation: freeze-pulse 1s infinite;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* 添加冰冻效果样式 */
+.freeze-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle at center,
+        rgba(0,191,255,0.1) 0%,
+        rgba(0,191,255,0.05) 50%,
+        transparent 70%
+    );
+    pointer-events: none;
+    animation: freeze-spread 3s linear;
+    z-index: 90;
+}
+
+@keyframes freeze-spread {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.2);
+    }
+}
+
+@keyframes freeze-pulse {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+} 
