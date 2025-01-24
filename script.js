@@ -53,6 +53,92 @@ const rounds = {
 let currentRound = 1;
 let roundLines = 0;  // 当前回合消除的行数
 
+// 添加音频管理系统
+const audioManager = {
+    bgm: new Audio('sounds/bgm.mp3'),
+    sounds: {
+        move: new Audio('sounds/move.wav'),
+        rotate: new Audio('sounds/rotate.wav'),
+        drop: new Audio('sounds/drop.wav'),
+        hardDrop: new Audio('sounds/hard-drop.wav'),  // 添加瞬间下落音效
+        clear: new Audio('sounds/clear.wav'),
+        gameOver: new Audio('sounds/game-over.wav'),
+        levelUp: new Audio('sounds/level-up.wav'),
+        explosion: new Audio('sounds/explosion.wav'),
+        freeze: new Audio('sounds/freeze.wav'),
+        freezeEnd: new Audio('sounds/freeze-end.wav'),
+        hold: new Audio('sounds/hold.wav')
+    },
+    isMuted: false,
+    bgmVolume: 0.3,
+    sfxVolume: 0.5,
+
+    initAudio() {
+        // 设置背景音乐循环播放
+        this.bgm.loop = true;
+        this.bgm.volume = this.bgmVolume;
+
+        // 设置音效音量
+        Object.values(this.sounds).forEach(sound => {
+            sound.volume = this.sfxVolume;
+        });
+
+        // 从本地存储加载音频设置
+        const savedSettings = localStorage.getItem('audioSettings');
+        if (savedSettings) {
+            const settings = JSON.parse(savedSettings);
+            this.isMuted = settings.isMuted;
+            this.bgmVolume = settings.bgmVolume;
+            this.sfxVolume = settings.sfxVolume;
+            this.updateVolumes();
+        }
+    },
+
+    playBGM() {
+        if (!this.isMuted) {
+            this.bgm.play().catch(error => console.log('BGM播放失败:', error));
+        }
+    },
+
+    pauseBGM() {
+        this.bgm.pause();
+    },
+
+    playSound(soundName) {
+        if (!this.isMuted && this.sounds[soundName]) {
+            this.sounds[soundName].currentTime = 0;
+            this.sounds[soundName].play().catch(error => console.log('音效播放失败:', error));
+        }
+    },
+
+    toggleMute() {
+        this.isMuted = !this.isMuted;
+        if (this.isMuted) {
+            this.bgm.pause();
+        } else {
+            this.bgm.play().catch(error => console.log('BGM播放失败:', error));
+        }
+        this.saveSettings();
+    },
+
+    updateVolumes() {
+        this.bgm.volume = this.isMuted ? 0 : this.bgmVolume;
+        Object.values(this.sounds).forEach(sound => {
+            sound.volume = this.isMuted ? 0 : this.sfxVolume;
+        });
+        this.saveSettings();
+    },
+
+    saveSettings() {
+        const settings = {
+            isMuted: this.isMuted,
+            bgmVolume: this.bgmVolume,
+            sfxVolume: this.sfxVolume
+        };
+        localStorage.setItem('audioSettings', JSON.stringify(settings));
+    }
+};
+
 function arenaSweep() {
     let rowCount = 0;
     outer: for (let y = arena.length - 1; y > 0; --y) {
@@ -69,6 +155,9 @@ function arenaSweep() {
     }
 
     if (rowCount > 0) {
+        // 播放消除行音效
+        audioManager.playSound('clear');
+        
         // 更新分数（累积制）
         if (rowCount === 1) {
             player.score += 10;
@@ -307,7 +396,7 @@ function showExplosionEffect(x, y) {
     document.querySelector('.play-area').appendChild(explosion);
     
     // 添加爆炸音效
-    playSound('explosion');
+    audioManager.playSound('explosion');
     
     setTimeout(() => {
         explosion.remove();
@@ -359,7 +448,7 @@ function checkFreezeEffect(piece) {
     if (hasFreeze && !freezeTimer) {
         freezeCountdown = 3;
         // 添加冰冻开始音效
-        playSound('freeze');
+        audioManager.playSound('freeze');
         
         freezeTimer = setInterval(() => {
             freezeCountdown--;
@@ -369,7 +458,7 @@ function checkFreezeEffect(piece) {
                 // 直接在当前位置固定方块
                 freezeBlock();
                 // 添加冰冻结束音效
-                playSound('freezeEnd');
+                audioManager.playSound('freezeEnd');
             }
         }, 1000);
     }
@@ -452,6 +541,9 @@ function playerDropToBottom() {
         clearInterval(freezeTimer);
         freezeTimer = null;
     }
+    
+    // 播放瞬间下落音效
+    audioManager.playSound('hardDrop');
     
     merge(arena, player);
     if (playerReset()) {
@@ -565,6 +657,9 @@ function holdBlock() {
         player.matrix = holdPiece;
         holdPiece = temp;
     }
+    
+    // 播放储存方块音效
+    audioManager.playSound('hold');
     
     player.pos.y = 0;
     player.pos.x = (arena[0].length / 2 | 0) -
@@ -794,6 +889,9 @@ function startGame() {
     gameOver = false;
     isPaused = false;
     
+    // 播放背景音乐
+    audioManager.playBGM();
+    
     // 重置游戏状态
     currentRound = 1;
     roundLines = 0;
@@ -811,10 +909,6 @@ function startGame() {
     startTime = Date.now();
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(updateTimer, 1000);
-    
-    // 重置游戏循环相关变量
-    lastTime = 0;
-    dropCounter = 0;
     
     // 初始化游戏
     updateRoundProgress();
@@ -869,8 +963,10 @@ function togglePause() {
         pauseMenu.classList.remove('hidden');
         pauseSelectedButton = 0;
         updatePauseMenuSelection();
+        audioManager.pauseBGM();
     } else {
         pauseMenu.classList.add('hidden');
+        audioManager.playBGM();
     }
 }
 
@@ -1043,9 +1139,13 @@ function checkGamepadInput() {
 // 修改 handleGameOver 函数
 function handleGameOver() {
     gameOver = true;
-    gameStarted = false; // 添加这行，确保游戏状态正确
+    gameStarted = false;
     document.getElementById('game-over').style.display = 'block';
     document.getElementById('final-score').textContent = player.score;
+    
+    // 播放游戏结束音效并停止背景音乐
+    audioManager.pauseBGM();
+    audioManager.playSound('gameOver');
     
     // 重置游戏结束菜单选择并立即更新选择状态
     gameOverSelectedButton = 0;
@@ -1081,6 +1181,17 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded');
     updateCurrentUser();
     updateHighScores();
+    
+    // 初始化音频系统
+    audioManager.initAudio();
+    
+    // 初始化音量控制
+    document.getElementById('bgm-volume').value = audioManager.bgmVolume * 100;
+    document.getElementById('sfx-volume').value = audioManager.sfxVolume * 100;
+    if (audioManager.isMuted) {
+        document.querySelector('.muted').classList.remove('hidden');
+        document.querySelector('.unmuted').classList.add('hidden');
+    }
     
     // 初始化菜单选择
     selectedButton = 0;
@@ -1143,6 +1254,9 @@ function showRoundComplete() {
         <p>当前总分：${player.score}</p>
     `;
     document.querySelector('.game-container').appendChild(roundCompleteDiv);
+    
+    // 播放升级音效
+    audioManager.playSound('levelUp');
     
     gameOver = true;
     
@@ -1363,20 +1477,6 @@ document.getElementById('quit-to-menu').addEventListener('click', () => {
     updateHighScores();
 });
 
-// 添加音效系统
-const sounds = {
-    explosion: new Audio('sounds/explosion.wav'),
-    freeze: new Audio('sounds/freeze.wav'),
-    freezeEnd: new Audio('sounds/freeze-end.wav')
-};
-
-function playSound(soundName) {
-    if (sounds[soundName]) {
-        sounds[soundName].currentTime = 0;
-        sounds[soundName].play().catch(error => console.log('音频播放失败:', error));
-    }
-}
-
 // 添加旋转函数
 function rotate(matrix, dir) {
     for (let y = 0; y < matrix.length; ++y) {
@@ -1396,6 +1496,7 @@ function rotate(matrix, dir) {
     } else {
         matrix.reverse();
     }
+    audioManager.playSound('rotate');
 }
 
 // 添加移动函数
@@ -1405,6 +1506,7 @@ function playerMove(dir) {
         player.pos.x -= dir;
         return false;
     }
+    audioManager.playSound('move');
     return true;
 }
 
@@ -1414,6 +1516,9 @@ function playerDrop() {
     if (collide(arena, player)) {
         player.pos.y--;
         merge(arena, player);
+        
+        // 播放落地音效
+        audioManager.playSound('drop');
         
         // 如果是手动落地，取消冰冻倒计时
         if (freezeTimer) {
@@ -1452,4 +1557,21 @@ function showFreezeCountdown() {
         countdown.textContent = freezeCountdown;
         document.querySelector('.play-area').appendChild(countdown);
     }
-} 
+}
+
+// 添加音量控制事件处理
+document.getElementById('bgm-volume').addEventListener('input', (e) => {
+    audioManager.bgmVolume = e.target.value / 100;
+    audioManager.updateVolumes();
+});
+
+document.getElementById('sfx-volume').addEventListener('input', (e) => {
+    audioManager.sfxVolume = e.target.value / 100;
+    audioManager.updateVolumes();
+});
+
+document.getElementById('mute-toggle').addEventListener('click', () => {
+    audioManager.toggleMute();
+    document.querySelector('.muted').classList.toggle('hidden');
+    document.querySelector('.unmuted').classList.toggle('hidden');
+}); 

@@ -117,6 +117,20 @@
                 </div>
             </div>
             <button id="restart" class="restart-btn">重新开始</button>
+            <div class="audio-controls">
+                <div class="volume-control">
+                    <label>音乐音量</label>
+                    <input type="range" id="bgm-volume" min="0" max="100" value="30">
+                </div>
+                <div class="volume-control">
+                    <label>音效音量</label>
+                    <input type="range" id="sfx-volume" min="0" max="100" value="50">
+                </div>
+                <button id="mute-toggle" class="mute-btn">
+                    <span class="unmuted">🔊</span>
+                    <span class="muted hidden">🔇</span>
+                </button>
+            </div>
             <div id="game-over" class="game-over">
                 游戏结束
                 <div class="final-score">最终得分：<span id="final-score">0</span></div>
